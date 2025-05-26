@@ -8,25 +8,22 @@ export class MyMCP extends McpAgent {
 		name: "Mixpanel Analytics",
 		version: "1.0.0",
 	});
-	
-	// Environment variables and defaults for Mixpanel authentication
-	SERVICE_ACCOUNT_USER_NAME = process.env.SERVICE_ACCOUNT_USER_NAME || "";
-	SERVICE_ACCOUNT_PASSWORD = process.env.SERVICE_ACCOUNT_PASSWORD || "";
-	DEFAULT_PROJECT_ID = process.env.DEFAULT_PROJECT_ID || "";
 
 	async init() {
 		// Get today's top events from Mixpanel
 		this.server.tool(
 			"get_today_top_events",
 			{
-				project_id: z.string().describe("The Mixpanel project ID. Optional since it has a default.").optional(),
+				username: z.string().describe("The Mixpanel service account username"),
+				password: z.string().describe("The Mixpanel service account password"),
+				project_id: z.string().describe("The Mixpanel project ID"),
 				type: z.enum(["general", "average", "unique"]).describe("The type of events to fetch, either general, average, or unique, defaults to general").optional(),
 				limit: z.number().optional().describe("Maximum number of events to return"),
 			},
-			async ({ project_id = this.DEFAULT_PROJECT_ID, type = "general", limit = 10 }) => {
+			async ({ username, password, project_id, type = "general", limit = 10 }) => {
 				try {
 					// Create authorization header using base64 encoding of credentials
-					const credentials = `${this.SERVICE_ACCOUNT_USER_NAME}:${this.SERVICE_ACCOUNT_PASSWORD}`;
+					const credentials = `${username}:${password}`;
 					const encodedCredentials = Buffer.from(credentials).toString('base64');
 					
 					// Construct URL with query parameters
@@ -79,14 +76,16 @@ export class MyMCP extends McpAgent {
 		this.server.tool(
 			"get_top_events",
 			{
-				project_id: z.string().describe("The Mixpanel project ID. Optional since it has a default.").optional(),
+				username: z.string().describe("The Mixpanel service account username"),
+				password: z.string().describe("The Mixpanel service account password"),
+				project_id: z.string().describe("The Mixpanel project ID"),
 				type: z.enum(["general", "average", "unique"]).describe("The type of events to fetch, either general, average, or unique, defaults to general").optional(),
 				limit: z.number().optional().describe("Maximum number of events to return"),
 			},
-			async ({ project_id = this.DEFAULT_PROJECT_ID, type = "general", limit = 10 }) => {
+			async ({ username, password, project_id, type = "general", limit = 10 }) => {
 				try {
 					// Create authorization header using base64 encoding of credentials
-					const credentials = `${this.SERVICE_ACCOUNT_USER_NAME}:${this.SERVICE_ACCOUNT_PASSWORD}`;
+					const credentials = `${username}:${password}`;
 					const encodedCredentials = Buffer.from(credentials).toString('base64');
 					
 					// Construct URL with query parameters
@@ -139,16 +138,18 @@ export class MyMCP extends McpAgent {
 		this.server.tool(
 			"profile_event_activity",
 			{
-				project_id: z.string().describe("The Mixpanel project ID. Optional since it has a default.").optional(),
+				username: z.string().describe("The Mixpanel service account username"),
+				password: z.string().describe("The Mixpanel service account password"),
+				project_id: z.string().describe("The Mixpanel project ID"),
 				workspace_id: z.string().describe("The ID of the workspace if applicable").optional(),
 				distinct_ids: z.string().describe("A JSON array as a string representing the `distinct_ids` to return activity feeds for. Example: `[\"12a34aa567eb8d-9ab1c26f345b67-89123c45-6aeaa7-89f12af345f678\"]`"),
 				from_date: z.string().describe("The date in yyyy-mm-dd format to begin querying from (inclusive)"),
 				to_date: z.string().describe("The date in yyyy-mm-dd format to query to (inclusive)"),
 			},
-			async ({ project_id = this.DEFAULT_PROJECT_ID, workspace_id, distinct_ids, from_date, to_date }) => {
+			async ({ username, password, project_id, workspace_id, distinct_ids, from_date, to_date }) => {
 				try {
 					// Create authorization header using base64 encoding of credentials
-					const credentials = `${this.SERVICE_ACCOUNT_USER_NAME}:${this.SERVICE_ACCOUNT_PASSWORD}`;
+					const credentials = `${username}:${password}`;
 					const encodedCredentials = Buffer.from(credentials).toString('base64');
 					
 					// Construct URL with query parameters
@@ -205,7 +206,9 @@ export class MyMCP extends McpAgent {
 		this.server.tool(
 			"aggregate_event_counts",
 			{
-				project_id: z.string().describe("The Mixpanel project ID. Optional since it has a default.").optional(),
+				username: z.string().describe("The Mixpanel service account username"),
+				password: z.string().describe("The Mixpanel service account password"),
+				project_id: z.string().describe("The Mixpanel project ID"),
 				event: z.string().describe("The event or events that you wish to get data for, a string encoded as a JSON array. Example format: \"[\\\"play song\\\", \\\"log in\\\", \\\"add playlist\\\"]\""),
 				type: z.enum(["general", "unique", "average"]).describe("The type of data to fetch, either general, unique, or average, defaults to general").optional(),
 				unit: z.enum(["minute", "hour", "day", "week", "month"]).describe("The level of granularity of the data you get back"),
@@ -213,10 +216,10 @@ export class MyMCP extends McpAgent {
 				from_date: z.string().optional().describe("The date in yyyy-mm-dd format to begin querying from (inclusive)"),
 				to_date: z.string().optional().describe("The date in yyyy-mm-dd format to query to (inclusive)"),
 			},
-			async ({ project_id = this.DEFAULT_PROJECT_ID, event, type = "general", unit, interval, from_date, to_date }) => {
+			async ({ username, password, project_id, event, type = "general", unit, interval, from_date, to_date }) => {
 				try {
 					// Create authorization header using base64 encoding of credentials
-					const credentials = `${this.SERVICE_ACCOUNT_USER_NAME}:${this.SERVICE_ACCOUNT_PASSWORD}`;
+					const credentials = `${username}:${password}`;
 					const encodedCredentials = Buffer.from(credentials).toString('base64');
 					
 					// Validate parameters
@@ -303,13 +306,15 @@ export class MyMCP extends McpAgent {
 		this.server.tool(
 			"query_insights_report",
 			{
-				project_id: z.string().describe("The Mixpanel project ID. Optional since it has a default.").optional(),
+				username: z.string().describe("The Mixpanel service account username"),
+				password: z.string().describe("The Mixpanel service account password"),
+				project_id: z.string().describe("The Mixpanel project ID"),
 				workspace_id: z.string().optional().describe("The ID of the workspace if applicable"),
 				bookmark_id: z.string().describe("The ID of your Insights report"),
 			},
-			async ({ project_id = this.DEFAULT_PROJECT_ID, workspace_id, bookmark_id }) => {
+			async ({ username, password, project_id, workspace_id, bookmark_id }) => {
 				try {
-					const credentials = `${this.SERVICE_ACCOUNT_USER_NAME}:${this.SERVICE_ACCOUNT_PASSWORD}`;
+					const credentials = `${username}:${password}`;
 					const encodedCredentials = Buffer.from(credentials).toString('base64');
 					
 					const queryParams = new URLSearchParams({
@@ -368,7 +373,9 @@ export class MyMCP extends McpAgent {
 		this.server.tool(
 			"query_funnel_report",
 			{
-				project_id: z.string().describe("The Mixpanel project ID. Optional since it has a default.").optional(),
+				username: z.string().describe("The Mixpanel service account username"),
+				password: z.string().describe("The Mixpanel service account password"),
+				project_id: z.string().describe("The Mixpanel project ID"),
 				workspace_id: z.string().optional().describe("The ID of the workspace if applicable"),
 				funnel_id: z.string().describe("The Mixpanel funnel ID that you wish to get data for"),
 				from_date: z.string().describe("The date in yyyy-mm-dd format to begin querying from (inclusive)"),
@@ -378,13 +385,13 @@ export class MyMCP extends McpAgent {
 				interval: z.number().optional().describe("The number of days you want each bucket to contain"),
 				unit: z.enum(["day", "week", "month"]).optional().describe("Alternate way of specifying interval"),
 			},
-			async ({ project_id = this.DEFAULT_PROJECT_ID, workspace_id, funnel_id, from_date, to_date, length, length_unit, interval, unit }) => {
+			async ({ username, password, project_id, workspace_id, funnel_id, from_date, to_date, length, length_unit, interval, unit }) => {
 				try {
-					const credentials = `${this.SERVICE_ACCOUNT_USER_NAME}:${this.SERVICE_ACCOUNT_PASSWORD}`;
+					const credentials = `${username}:${password}`;
 					const encodedCredentials = Buffer.from(credentials).toString('base64');
 					
 					const queryParams = new URLSearchParams({
-						project_id: project_id || '',
+						project_id: project_id,
 						funnel_id: funnel_id,
 						from_date: from_date,
 						to_date: to_date
@@ -443,12 +450,14 @@ export class MyMCP extends McpAgent {
 		this.server.tool(
 			"list_saved_cohorts",
 			{
-				project_id: z.string().describe("The Mixpanel project ID. Optional since it has a default.").optional(),
+				username: z.string().describe("The Mixpanel service account username"),
+				password: z.string().describe("The Mixpanel service account password"),
+				project_id: z.string().describe("The Mixpanel project ID"),
 				workspace_id: z.string().optional().describe("The ID of the workspace if applicable"),
 			},
-			async ({ project_id = this.DEFAULT_PROJECT_ID, workspace_id }) => {
+			async ({ username, password, project_id, workspace_id }) => {
 				try {
-					const credentials = `${this.SERVICE_ACCOUNT_USER_NAME}:${this.SERVICE_ACCOUNT_PASSWORD}`;
+					const credentials = `${username}:${password}`;
 					const encodedCredentials = Buffer.from(credentials).toString('base64');
 					
 					let url = `https://mixpanel.com/api/query/cohorts?project_id=${project_id}`;
@@ -501,12 +510,14 @@ export class MyMCP extends McpAgent {
 		this.server.tool(
 			"list_saved_funnels",
 			{
-				project_id: z.string().describe("The Mixpanel project ID. Optional since it has a default.").optional(),
+				username: z.string().describe("The Mixpanel service account username"),
+				password: z.string().describe("The Mixpanel service account password"),
+				project_id: z.string().describe("The Mixpanel project ID"),
 				workspace_id: z.string().optional().describe("The ID of the workspace if applicable"),
 			},
-			async ({ project_id = this.DEFAULT_PROJECT_ID, workspace_id }) => {
+			async ({ username, password, project_id, workspace_id }) => {
 				try {
-					const credentials = `${this.SERVICE_ACCOUNT_USER_NAME}:${this.SERVICE_ACCOUNT_PASSWORD}`;
+					const credentials = `${username}:${password}`;
 					const encodedCredentials = Buffer.from(credentials).toString('base64');
 					
 					let url = `https://mixpanel.com/api/query/funnels/list?project_id=${project_id}`;
@@ -559,7 +570,9 @@ export class MyMCP extends McpAgent {
 		this.server.tool(
 			"query_segmentation_average",
 			{
-				project_id: z.string().describe("The Mixpanel project ID. Optional since it has a default.").optional(),
+				username: z.string().describe("The Mixpanel service account username"),
+				password: z.string().describe("The Mixpanel service account password"),
+				project_id: z.string().describe("The Mixpanel project ID"),
 				event: z.string().describe("The event that you wish to get data for. Note: this is a single event name, not an array"),
 				from_date: z.string().describe("The date in yyyy-mm-dd format to begin querying from (inclusive)"),
 				to_date: z.string().describe("The date in yyyy-mm-dd format to query to (inclusive)"),
@@ -568,9 +581,9 @@ export class MyMCP extends McpAgent {
 				where: z.string().optional().describe("An expression to filter events"),
 				workspace_id: z.string().optional().describe("The ID of the workspace if applicable"),
 			},
-			async ({ project_id = this.DEFAULT_PROJECT_ID, event, from_date, to_date, on, unit = "day", where, workspace_id }) => {
+			async ({ username, password, project_id, event, from_date, to_date, on, unit = "day", where, workspace_id }) => {
 				try {
-					const credentials = `${this.SERVICE_ACCOUNT_USER_NAME}:${this.SERVICE_ACCOUNT_PASSWORD}`;
+					const credentials = `${username}:${password}`;
 					const encodedCredentials = Buffer.from(credentials).toString('base64');
 					
 					// Construct parameters
@@ -633,7 +646,9 @@ export class MyMCP extends McpAgent {
 		this.server.tool(
 			"query_segmentation_sum",
 			{
-				project_id: z.string().describe("The Mixpanel project ID. Optional since it has a default.").optional(),
+				username: z.string().describe("The Mixpanel service account username"),
+				password: z.string().describe("The Mixpanel service account password"),
+				project_id: z.string().describe("The Mixpanel project ID"),
 				event: z.string().describe("The event that you wish to get data for (single event name, not an array)"),
 				from_date: z.string().describe("The date in yyyy-mm-dd format to begin querying from (inclusive)"),
 				to_date: z.string().describe("The date in yyyy-mm-dd format to query to (inclusive)"),
@@ -642,9 +657,9 @@ export class MyMCP extends McpAgent {
 				where: z.string().optional().describe("An expression to filter events"),
 				workspace_id: z.string().optional().describe("The ID of the workspace if applicable"),
 			},
-			async ({ project_id = this.DEFAULT_PROJECT_ID, event, from_date, to_date, on, unit = "day", where, workspace_id }) => {
+			async ({ username, password, project_id, event, from_date, to_date, on, unit = "day", where, workspace_id }) => {
 				try {
-					const credentials = `${this.SERVICE_ACCOUNT_USER_NAME}:${this.SERVICE_ACCOUNT_PASSWORD}`;
+					const credentials = `${username}:${password}`;
 					const encodedCredentials = Buffer.from(credentials).toString('base64');
 					
 					// Construct parameters
@@ -707,7 +722,9 @@ export class MyMCP extends McpAgent {
 		this.server.tool(
 			"query_segmentation_report",
 			{
-				project_id: z.string().describe("The Mixpanel project ID. Optional since it has a default.").optional(),
+				username: z.string().describe("The Mixpanel service account username"),
+				password: z.string().describe("The Mixpanel service account password"),
+				project_id: z.string().describe("The Mixpanel project ID"),
 				event: z.string().describe("The event that you wish to get data for. Note: this is a single event name, not an array"),
 				from_date: z.string().describe("The date in yyyy-mm-dd format to begin querying from (inclusive)"),
 				to_date: z.string().describe("The date in yyyy-mm-dd format to query to (inclusive)"),
@@ -720,9 +737,9 @@ export class MyMCP extends McpAgent {
 				format: z.enum(["csv"]).optional().describe("Can be set to 'csv'"),
 				workspace_id: z.string().optional().describe("The ID of the workspace if applicable"),
 			},
-			async ({ project_id = this.DEFAULT_PROJECT_ID, event, from_date, to_date, where, unit = "day", interval, type = "general", limit = 60, on, format, workspace_id }) => {
+			async ({ username, password, project_id, event, from_date, to_date, where, unit = "day", interval, type = "general", limit = 60, on, format, workspace_id }) => {
 				try {
-					const credentials = `${this.SERVICE_ACCOUNT_USER_NAME}:${this.SERVICE_ACCOUNT_PASSWORD}`;
+					const credentials = `${username}:${password}`;
 					const encodedCredentials = Buffer.from(credentials).toString('base64');
 					
 					// Construct parameters
@@ -789,7 +806,9 @@ export class MyMCP extends McpAgent {
 		this.server.tool(
 			"query_segmentation_bucket",
 			{
-				project_id: z.string().describe("The Mixpanel project ID. Optional since it has a default.").optional(),
+				username: z.string().describe("The Mixpanel service account username"),
+				password: z.string().describe("The Mixpanel service account password"),
+				project_id: z.string().describe("The Mixpanel project ID"),
 				event: z.string().describe("The event that you wish to get data for. Note: this is a single event name, not an array"),
 				from_date: z.string().describe("The date in yyyy-mm-dd format to begin querying from (inclusive)"),
 				to_date: z.string().describe("The date in yyyy-mm-dd format to query to (inclusive)"),
@@ -799,9 +818,9 @@ export class MyMCP extends McpAgent {
 				type: z.enum(["general", "unique", "average"]).optional().describe("The type of analysis to perform, either general, unique, or average, defaults to general"),
 				workspace_id: z.string().optional().describe("The ID of the workspace if applicable"),
 			},
-			async ({ project_id = this.DEFAULT_PROJECT_ID, event, from_date, to_date, on, where, unit = "day", type = "general", workspace_id }) => {
+			async ({ username, password, project_id, event, from_date, to_date, on, where, unit = "day", type = "general", workspace_id }) => {
 				try {
-					const credentials = `${this.SERVICE_ACCOUNT_USER_NAME}:${this.SERVICE_ACCOUNT_PASSWORD}`;
+					const credentials = `${username}:${password}`;
 					const encodedCredentials = Buffer.from(credentials).toString('base64');
 					
 					// Construct parameters
@@ -865,7 +884,9 @@ export class MyMCP extends McpAgent {
 		this.server.tool(
 			"query_retention_report",
 			{
-				project_id: z.string().describe("The Mixpanel project ID. Optional since it has a default.").optional(),
+				username: z.string().describe("The Mixpanel service account username"),
+				password: z.string().describe("The Mixpanel service account password"),
+				project_id: z.string().describe("The Mixpanel project ID"),
 				from_date: z.string().describe("The date in yyyy-mm-dd format to begin querying from (inclusive)"),
 				to_date: z.string().describe("The date in yyyy-mm-dd format to query to (inclusive)"),
 				retention_type: z.enum(["birth", "compounded"]).optional().describe("Type of retention: 'birth' (first time) or 'compounded' (recurring). Defaults to 'birth'"),
@@ -880,9 +901,9 @@ export class MyMCP extends McpAgent {
 				limit: z.number().optional().describe("Return the top limit segmentation values. Only applies when 'on' is specified"),
 				workspace_id: z.string().optional().describe("The ID of the workspace if applicable"),
 			},
-			async ({ project_id = this.DEFAULT_PROJECT_ID, from_date, to_date, retention_type = "birth", born_event, event, born_where, return_where, interval, interval_count, unit, on, limit, workspace_id }) => {
+			async ({ username, password, project_id, from_date, to_date, retention_type = "birth", born_event, event, born_where, return_where, interval, interval_count, unit, on, limit, workspace_id }) => {
 				try {
-					const credentials = `${this.SERVICE_ACCOUNT_USER_NAME}:${this.SERVICE_ACCOUNT_PASSWORD}`;
+					const credentials = `${username}:${password}`;
 					const encodedCredentials = Buffer.from(credentials).toString('base64');
 					
 					// Construct parameters
@@ -952,7 +973,9 @@ export class MyMCP extends McpAgent {
 		this.server.tool(
 			"query_frequency_report",
 			{
-				project_id: z.string().describe("The Mixpanel project ID. Optional since it has a default.").optional(),
+				username: z.string().describe("The Mixpanel service account username"),
+				password: z.string().describe("The Mixpanel service account password"),
+				project_id: z.string().describe("The Mixpanel project ID"),
 				from_date: z.string().describe("The date in yyyy-mm-dd format to begin querying from (inclusive)"),
 				to_date: z.string().describe("The date in yyyy-mm-dd format to query to (inclusive)"),
 				unit: z.enum(["day", "week", "month"]).describe("The overall time period to return frequency of actions for"),
@@ -963,9 +986,9 @@ export class MyMCP extends McpAgent {
 				limit: z.number().optional().describe("Return the top limit segmentation values. This parameter does nothing if 'on' is not specified"),
 				workspace_id: z.string().optional().describe("The ID of the workspace if applicable"),
 			},
-			async ({ project_id = this.DEFAULT_PROJECT_ID, from_date, to_date, unit, addiction_unit, where, event, on, limit, workspace_id }) => {
+			async ({ username, password, project_id, from_date, to_date, unit, addiction_unit, where, event, on, limit, workspace_id }) => {
 				try {
-					const credentials = `${this.SERVICE_ACCOUNT_USER_NAME}:${this.SERVICE_ACCOUNT_PASSWORD}`;
+					const credentials = `${username}:${password}`;
 					const encodedCredentials = Buffer.from(credentials).toString('base64');
 					
 					// Construct parameters
@@ -1031,7 +1054,9 @@ export class MyMCP extends McpAgent {
 		this.server.tool(
 			"query_profiles",
 			{
-				project_id: z.string().describe("The Mixpanel project ID. Optional since it has a default.").optional(),
+				username: z.string().describe("The Mixpanel service account username"),
+				password: z.string().describe("The Mixpanel service account password"),
+				project_id: z.string().describe("The Mixpanel project ID"),
 				workspace_id: z.string().optional().describe("The ID of the workspace if applicable"),
 				where: z.string().optional().describe("An expression to filter users (or groups)"),
 				output_properties: z.string().optional().describe("A JSON array of names of properties you want returned. Example: '[\"$last_name\", \"$email\", \"Total Spent\"]'"),
@@ -1045,9 +1070,9 @@ export class MyMCP extends McpAgent {
 				behaviors: z.number().optional().describe("If you are exporting user profiles using an event selector, you use a 'behaviors' parameter in your request"),
 				as_of_timestamp: z.number().optional().describe("This parameter is only useful when also using 'behaviors'"),
 			},
-			async ({ project_id = this.DEFAULT_PROJECT_ID, workspace_id, where, output_properties, filter_by_cohort, include_all_users, distinct_ids, distinct_id, session_id, page, data_group_id, behaviors, as_of_timestamp }) => {
+			async ({ username, password, project_id, workspace_id, where, output_properties, filter_by_cohort, include_all_users, distinct_ids, distinct_id, session_id, page, data_group_id, behaviors, as_of_timestamp }) => {
 				try {
-					const credentials = `${this.SERVICE_ACCOUNT_USER_NAME}:${this.SERVICE_ACCOUNT_PASSWORD}`;
+					const credentials = `${username}:${password}`;
 					const encodedCredentials = Buffer.from(credentials).toString('base64');
 					
 					// Build query parameters
@@ -1116,7 +1141,9 @@ export class MyMCP extends McpAgent {
 		this.server.tool(
 			"aggregated_event_property_values",
 			{
-				project_id: z.string().describe("The Mixpanel project ID. Optional since it has a default.").optional(),
+				username: z.string().describe("The Mixpanel service account username"),
+				password: z.string().describe("The Mixpanel service account password"),
+				project_id: z.string().describe("The Mixpanel project ID"),
 				from_date: z.string().optional().describe("The date in yyyy-mm-dd format to begin querying from (inclusive)"),
 				to_date: z.string().optional().describe("The date in yyyy-mm-dd format to query to (inclusive)"),
 				interval: z.number().optional().describe("The number of units to return data for. Specify either interval or from_date and to_date"),
@@ -1127,9 +1154,9 @@ export class MyMCP extends McpAgent {
 				unit: z.enum(["minute", "hour", "day", "week", "month"]).describe("The level of granularity of the data (minute, hour, day, week, or month)"),
 				limit: z.number().optional().describe("The maximum number of values to return (default: 255)"),
 			},
-			async ({ project_id = this.DEFAULT_PROJECT_ID, from_date, to_date, interval, event, name, values, type = "general", unit, limit = 255 }) => {
+			async ({ username, password, project_id, from_date, to_date, interval, event, name, values, type = "general", unit, limit = 255 }) => {
 				try {
-					const credentials = `${this.SERVICE_ACCOUNT_USER_NAME}:${this.SERVICE_ACCOUNT_PASSWORD}`;
+					const credentials = `${username}:${password}`;
 					const encodedCredentials = Buffer.from(credentials).toString('base64');
 					
 					// Validate parameters
@@ -1204,14 +1231,16 @@ export class MyMCP extends McpAgent {
 		this.server.tool(
 			"top_event_properties",
 			{
-				project_id: z.string().describe("The Mixpanel project ID").optional(),
+				username: z.string().describe("The Mixpanel service account username"),
+				password: z.string().describe("The Mixpanel service account password"),
+				project_id: z.string().describe("The Mixpanel project ID"),
 				event: z.string().describe("The event that you wish to get data for. Note: this is a single event name, not an array"),
 				limit: z.number().optional().describe("The maximum number of properties to return. Defaults to 10"),
 				workspace_id: z.string().optional().describe("The ID of the workspace if applicable"),
 			},
-			async ({ project_id = this.DEFAULT_PROJECT_ID, event, limit = 10, workspace_id }) => {
+			async ({ username, password, project_id, event, limit = 10, workspace_id }) => {
 				try {
-					const credentials = `${this.SERVICE_ACCOUNT_USER_NAME}:${this.SERVICE_ACCOUNT_PASSWORD}`;
+					const credentials = `${username}:${password}`;
 					const encodedCredentials = Buffer.from(credentials).toString('base64');
 					
 					// Construct parameters
@@ -1270,15 +1299,17 @@ export class MyMCP extends McpAgent {
 		this.server.tool(
 			"top_event_property_values",
 			{
-				project_id: z.string().describe("The Mixpanel project ID").optional(),
+				username: z.string().describe("The Mixpanel service account username"),
+				password: z.string().describe("The Mixpanel service account password"),
+				project_id: z.string().describe("The Mixpanel project ID"),
 				event: z.string().describe("The event that you wish to get data for. Note: this is a single event name, not an array"),
 				name: z.string().describe("The name of the property you would like to get data for"),
 				limit: z.number().optional().describe("The maximum number of values to return. Defaults to 255"),
 				workspace_id: z.string().optional().describe("The ID of the workspace if applicable"),
 			},
-			async ({ project_id = this.DEFAULT_PROJECT_ID, event, name, limit = 255, workspace_id }) => {
+			async ({ username, password, project_id, event, name, limit = 255, workspace_id }) => {
 				try {
-					const credentials = `${this.SERVICE_ACCOUNT_USER_NAME}:${this.SERVICE_ACCOUNT_PASSWORD}`;
+					const credentials = `${username}:${password}`;
 					const encodedCredentials = Buffer.from(credentials).toString('base64');
 					
 					// Construct parameters
@@ -1338,23 +1369,26 @@ export class MyMCP extends McpAgent {
 		this.server.tool(
 			"custom_jql",
 			{
-				project_id: z.string().describe("The Mixpanel project ID. Optional since it has a default.").optional(),
+				username: z.string().describe("The Mixpanel service account username"),
+				password: z.string().describe("The Mixpanel service account password"),
+				project_id: z.string().describe("The Mixpanel project ID"),
 				script: z.string().describe("The JQL script to run (JavaScript code that uses Mixpanel's JQL functions)"),
 				params: z.string().optional().describe("A JSON string containing parameters to pass to the script (will be available as the 'params' variable)"),
 				workspace_id: z.string().optional().describe("The ID of the workspace if applicable"),
 			},
-			async ({ project_id = this.DEFAULT_PROJECT_ID, script, params, workspace_id }) => {
+			async ({ username, password, project_id, script, params, workspace_id }) => {
 				try {
-					const credentials = `${this.SERVICE_ACCOUNT_USER_NAME}:${this.SERVICE_ACCOUNT_PASSWORD}`;
+					const credentials = `${username}:${password}`;
 					const encodedCredentials = Buffer.from(credentials).toString('base64');
 					
 					// Build request body
-					const requestBody = {
+					const requestBody: Record<string, any> = {
 						script: script
 					};
 					
 					if (params) {
 						try {
+							// Add parsed params to request body
 							requestBody.params = JSON.parse(params);
 						} catch (e) {
 							throw new Error(`Invalid JSON in params: ${e instanceof Error ? e.message : String(e)}`);
